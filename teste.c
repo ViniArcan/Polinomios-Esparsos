@@ -7,11 +7,34 @@ typedef struct POL { /* Usando uma estrutura de arvore para nossos Polinomios,
     bool monomio;
 
     long long int grau;
-    int coef, tam;
+    int coef;
 
-    POL *Par, *Impar;
+    struct POL* Seq;
 
 }
+
+bool SOMA(POL **P, POL **Q, POL *R){
+    if (Q.grau > P.grau){
+        R.grau = P.grau; R.coef = P.coef;
+        if(P.Seq == NULL){
+            R.Seq = *Q; /*  isso aqui tá errado... (A gente ta passando o ponteiro de Q para R. Se Q for alterado dps, R tbm será)
+                            Vamo ter que criar uma função Copiar(POL P) para poder lidar com isso */
+            return TRUE;
+        }
+        return SOMA(&P.Seq, Q, R.Seq);
+    }
+    if(P.grau > Q.grau){
+        R.grau = Q.grau; R.coef = Q.coef;
+        if(Q.Seq == NULL){
+            R.Seq = *P;
+            return TRUE;
+        }
+        return SOMA(P, &Q.Seq, R.Seq);
+    }
+    R.grau = P.grau; R.coef = P.coef + Q.coef;
+    return TRUE;
+}
+
 
 /*  Bem, eu tentei pensar um pouco na soma usando outros TAD (listas de todo tipo),
     e o melhor que saia era na minha cabeça era n log(n) (eu sou meio burro e quase ctz deve tbm ter um jeitinho linear).
@@ -21,7 +44,7 @@ typedef struct POL { /* Usando uma estrutura de arvore para nossos Polinomios,
     temos que nosso algorimo de soma quebra ela em duas avores menores (de aprox msm tamanho)
     e soma tudo com recursão. Tipo assim:
 
-    Soma(P, Q) = Soma(P.Par, Q.Par) + Soma(P.Impar, Q.Impar)
+    Complexidade( Soma(P, Q) ) = Complexidade( Soma(P.Par, Q.Par) ) + Complexidade( Soma(P.Impar, Q.Impar) )
     
     Como podemos esperar que cada arvore filho tem aprox metade do tam do pai, então podemos cotar a complexidade por:
     

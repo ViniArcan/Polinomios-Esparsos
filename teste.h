@@ -1,7 +1,7 @@
 #ifndef POL_H
 #define POL_H
 
-#define TAM_MAX 10000000000 /**/
+#define TAM_MAX 10000000000 /* eu acho que isso ta bom */
 
 typedef long long int g;
 typedef int c;
@@ -25,6 +25,6 @@ long long int GRAU(POL *A);
 
 void IMPRIME(POL *A);
 void IMPRIMEINV(POL *A);
-void LIMERA(POL *A);
+void LIBERA(POL *A);
 
 #endif

@@ -12,6 +12,7 @@ POL Pol_criar(){
     P.prox = NULL;
 
     return P;
+
 } // Complexidade Const 🥴
 
 void COPIA(POL *Q, POL *P){
@@ -138,7 +139,7 @@ POL SOMA(POL **P, POL **Q){
 
     T->coef = P->coef + Q->coef; T->grau = P->grau;
 
-    if(R->coef == 0){
+    if(T->coef == 0){
         return SOMA(*((*P)->prox), *((*Q)->prox));
     }
 
@@ -153,11 +154,15 @@ void MonProd(*P, c, g){
     P->coef *= c; P->grau += g;
     MonProd(P->prox, c, g);
     return;
+    
 } // Complexidade O(N) 
 
+
+// R = PROD(&P, &Q);
 POL PROD(*P, *Q){
 
     POL T0 = Pol_criar(), T1 = Pol_criar(), T2 = T2_criar();
+
     T0->coef = P->coef * Q->coef; T0->grau = P->grau + Q->grau;
 
     T1 = COPIA(&T1, P->prox); T2 = COPIA(&T2, Q->prox); //lixo

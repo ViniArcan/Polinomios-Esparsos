@@ -7,7 +7,7 @@ typedef long long int g;
 typedef int c;
 
 /*
-typedef struct {
+typedef struct mon {
     unsigned long long grau;
     int coef;
     int prox;

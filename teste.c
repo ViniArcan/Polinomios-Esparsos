@@ -158,10 +158,14 @@ void MonProd(*P, c, g){
 } // Complexidade O(N) 
 
 
-// R = PROD(&P, &Q);
+// R = PROD(&P, &Q); R = (p0 + Pp) * (q0 + Qp) = p0*q0 + q0*Pp + p0*Qp + Pp*Qp
 POL PROD(*P, *Q){
 
-    POL T0 = Pol_criar(), T1 = Pol_criar(), T2 = T2_criar();
+    if(P->prox == NULL){
+        //eita
+    }
+
+    POL T0 = Pol_criar(), T1 = Pol_criar(), T2 = Pol_criar();
 
     T0->coef = P->coef * Q->coef; T0->grau = P->grau + Q->grau;
 

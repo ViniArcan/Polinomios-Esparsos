@@ -70,6 +70,7 @@ bool SOMA(POL **P, POL **Q, POL *R){
     return TRUE;
 }
 
+/*
 bool PROD(POL **P, POL **Q, POL *R){
     if (Q.Seq == NULL){
         if(P.Seq == NULL){

@@ -6,7 +6,8 @@ typedef struct POL { /* Usando uma estrutura de arvore para nossos Polinomios,
                         assim podemos conseguir complexidade linear (na vdd é até um pouco melhor) e quadratica para o produto */
     bool monomio;
 
-    long long int grau;
+    long long int grau; /*  Se colocarmos os graus em ordem crescente, então podemos apenas colocar a diferença do anterior pro proximo.
+                            Dessa forma podemos poupar algumas computações na multiplicação*/
     int coef;
 
     struct POL* Seq;
@@ -17,11 +18,11 @@ bool SOMA(POL **P, POL **Q, POL *R){
     if (Q.grau > P.grau){
         R.grau = P.grau; R.coef = P.coef;
         if(P.Seq == NULL){
-            R.Seq = *Q; /*  isso aqui tá errado... (A gente ta passando o ponteiro de Q para R. Se Q for alterado dps, R tbm será)
+            R.Seq = *Q; /*  isso aqui tá errado... (A gente ta passando o ponteiro de Q para R. Se Q for alterado dps, R tbm vai ser)
                             Vamo ter que criar uma função Copiar(POL P) para poder lidar com isso */
             return TRUE;
         }
-        return SOMA(&P.Seq, Q, R.Seq);
+        return SOMA(P.Seq, Q, R.Seq);
     }
     if(P.grau > Q.grau){
         R.grau = Q.grau; R.coef = Q.coef;
@@ -30,6 +31,29 @@ bool SOMA(POL **P, POL **Q, POL *R){
             return TRUE;
         }
         return SOMA(P, &Q.Seq, R.Seq);
+    }
+    R.grau = P.grau; R.coef = P.coef + Q.coef;
+    return TRUE;
+}
+
+bool PROD(POL **P, POL **Q, POL *R){
+    if (Q.Seq == NULL){
+        if(P.Seq == NULL){
+            R.coef = Q.coef*P.coef; R.grau = Q.grau + P.grau;
+            R.Seq = NULL;
+            return TRUE;
+        }
+        R.coef = Q.coef*P.coef; R.grau = Q.grau + P.grau;
+        return PROD(P.Seq, Q, R.Seq);
+    }
+    if (P.Seq == NULL){
+        if(P.Seq == NULL){
+            R.coef = Q.coef*P.coef; R.grau = Q.grau + P.grau;
+            R.Seq = NULL;
+            return TRUE;
+        }
+        R.coef = Q.coef*P.coef; R.grau = Q.grau + P.grau;
+        return PROD(P, Q.Seq, R.Seq);
     }
     R.grau = P.grau; R.coef = P.coef + Q.coef;
     return TRUE;

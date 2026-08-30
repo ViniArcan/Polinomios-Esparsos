@@ -6,16 +6,18 @@
 typedef long long int g;
 typedef int c;
 
+/*
 typedef struct {
     unsigned long long grau;
     int coef;
     int prox;
 } mon;
+*/
 
-typedef struct {
+typedef struct POL {
     unsigned long long grau;
     int coef;
-    struct *prox;
+    struct POL* prox;
 } POL;
 
 /*

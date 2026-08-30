@@ -5,6 +5,7 @@
 
 
 POL Pol_criar(){
+    
     POL P;
     P.grau = 0;
     P.coef = 0;
@@ -14,32 +15,83 @@ POL Pol_criar(){
 }
 
 void COPIA(POL *Q, POL *P){
+
+    if( Q == NULL ){
+
+        Q = Pol_criar();
+
+    }
+
     Q->coef = P->coef; Q->grau = P->grau;
+
     if (P->prox != NULL){
-        if( Q->prox == NULL ){
-            Q->prox = Pol_criar();
-        }
+
         COPIA(Q->prox, P->prox);
         return;
+
     }
+
     Q->prox = NULL;
     return;
+
 }
 
 void ADD(POL *P, int c, unsigned long long g){
+
     POL *Rem, *Pos = P;
-    while( (g > Pos->grau) && (Pos != NULL) ){
+
+    while( (Pos != NULL) && (g > Pos->grau) ){
+
         Rem = Pos;
         Pos = P->prox;
+
     }
-    if( g == Pos->grau ){
+
+    if( (Pos != NULL) && (g == Pos->grau) ){
+
+        if(c == -(Pos->coef)){
+
+            Rem->prox = Pos->prox;
+            //LIBERA(Pos);
+            return;
+
+        }
+
         Pos->coef += c;
         return;
+
     }
+
     POL T = Pol_criar(); T.grau = g; T.coef = c; T.prox = Pos;
     Rem->prox = *T;
+
     return;
 }
+
+/*
+void ADD(POL *P, int c, unsigned long long g){
+    if(*P != NULL){
+        if( g > P->grau ){
+            ADD(P->prox, c, g)
+            return;
+        }
+        if( g == P->grau ){
+            if(c == -(P->coef)){
+                //preguiça de pensar como fazer isso com recursão
+            }
+            P->coef += c;
+            return;
+        }
+    }
+    else{
+        *P = Pol_criar(); P->coef = c; P->grau = g;
+        return;
+    }
+    POL T = Pol_criar(); T.grau = P->grau; T.coef = P->coef; T.prox = P->prox;
+    P->coef = c; P->grau = g; P->prox = &T;
+    return;
+}
+*/
 
 /*
 POL SOMA(POL *P, POL *Q, POL *R){
@@ -49,25 +101,49 @@ POL SOMA(POL *P, POL *Q, POL *R){
     for(int i = 0; i<N)
 }*/
 
-bool SOMA(POL **P, POL **Q, POL *R){
+// R = SOMA( &&P, &&Q);
+POL SOMA(POL **P, POL **Q){
+
+    POL T = Pol_criar();
+
     if ((*Q)->grau > (*P)->grau){
-        R->grau = (*P)->grau; R->coef = (*P)->coef;
+
+        T->grau = (*P)->grau; T->coef = (*P)->coef;
+
         if((*P)->prox == NULL){
-            COPIA(R->prox, *Q);
-            return TRUE;
+
+            COPIA(T->prox, *Q);
+            return T;
+
         }
-        return SOMA(*((*P)->prox), Q, R->prox);
+
+        T->prox = SOMA(*((*P)->prox), Q);
+        return T;
     }
+
     if ((*P)->grau > (*Q)->grau){
-        R->grau = (*Q)->grau; R->coef = (*Q)->coef;
+
+        T->grau = (*Q)->grau; T->coef = (*Q)->coef;
+
         if((*Q)->prox == NULL){
-            COPIA(R->prox, *P);
-            return TRUE;
+
+            COPIA(T->prox, *P);
+            return t;
+
         }
-        return SOMA(P, *((*Q)->prox), R->prox);
+
+        T->prox = SOMA(*((*Q)->prox), P);
+        return T;
     }
-    R->coef = P->coef + Q->coef; R->grau = P->grau;
-    return TRUE;
+
+    T->coef = P->coef + Q->coef; T->grau = P->grau;
+
+    if(R->coef == 0){
+        return SOMA(*((*P)->prox), *((*Q)->prox));
+    }
+
+    T->prox = SOMA(*((*P)->prox), *((*Q)->prox));
+    return T;
 }
 
 /*

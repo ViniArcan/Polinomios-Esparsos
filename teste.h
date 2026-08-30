@@ -6,25 +6,48 @@
 typedef long long int g;
 typedef int c;
 
-typedef struct pol_ POL;
+typedef struct {
+    unsigned long long grau;
+    int coef;
+    int prox;
+} mon;
+
+typedef struct {
+    unsigned long long grau;
+    int coef;
+    struct *prox;
+} POL;
+
+/*
+typedef struct POL {  Usando uma estrutura de arvore para nossos Polinomios,
+                        assim podemos conseguir complexidade linear (na vdd é até um pouco melhor) e quadratica para o produto 
+    bool monomio;
+
+    long long int grau;  Se colocarmos os graus em ordem crescente, então podemos apenas colocar a diferença do anterior pro proximo.
+                            Dessa forma podemos poupar algumas computações na multiplicação
+    int coef;
+
+    struct POL* Seq;
+
+} */
 
 POL *Pol_criar(void);
 
-POL *SOMA(POL *A, POL *B);
-POL *PROD(POL *A, POL *B);
+POL *SOMA(POL *P, POL *Q);
+POL *PROD(POL *P, POL *Q);
 
-POL *ADD(POL *A, int c, int g);
+POL *ADD(POL *P, int c, int g);
 
-void ESCALA(POL *A, int c);
+void ESCALA(POL *P, int c);
 
-void REMOVE(POL *A, int g);
-void REMOVEMENOR(POL *A);
+void REMOVE(POL *P, int g);
+void REMOVEMENOR(POL *P);
 
-int COEF(POL *A, int g);
-long long int GRAU(POL *A);
+int COEF(POL *P, int g);
+long long int GRAU(POL *P);
 
-void IMPRIME(POL *A);
-void IMPRIMEINV(POL *A);
-void LIBERA(POL *A);
+void IMPRIME(POL *P);
+void IMPRIMEINV(POL *P);
+void LIBERA(POL *P);
 
 #endif

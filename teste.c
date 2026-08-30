@@ -5,14 +5,14 @@
 
 
 POL Pol_criar(){
-    
+
     POL P;
     P.grau = 0;
     P.coef = 0;
     P.prox = NULL;
 
     return P;
-}
+} // Complexidade Const 🥴
 
 void COPIA(POL *Q, POL *P){
 
@@ -34,7 +34,7 @@ void COPIA(POL *Q, POL *P){
     Q->prox = NULL;
     return;
 
-}
+} // Complexidade O(N)
 
 void ADD(POL *P, int c, unsigned long long g){
 
@@ -66,7 +66,7 @@ void ADD(POL *P, int c, unsigned long long g){
     Rem->prox = *T;
 
     return;
-}
+} // Complexidade O(N)
 
 /*
 void ADD(POL *P, int c, unsigned long long g){
@@ -144,7 +144,32 @@ POL SOMA(POL **P, POL **Q){
 
     T->prox = SOMA(*((*P)->prox), *((*Q)->prox));
     return T;
-}
+} // Complexidade O(N + M) 😐
+
+void MonProd(*P, c, g){
+
+    if(P == NULL){ return; }
+
+    P->coef *= c; P->grau += g;
+    MonProd(P->prox, c, g);
+    return;
+} // Complexidade O(N) 
+
+POL PROD(*P, *Q){
+
+    POL T0 = Pol_criar(), T1 = Pol_criar(), T2 = T2_criar();
+    T0->coef = P->coef * Q->coef; T0->grau = P->grau + Q->grau;
+
+    T1 = COPIA(&T1, P->prox); T2 = COPIA(&T2, Q->prox); //lixo
+
+    MonProd(T1, Q->coef, Q->grau); MonProd(T2, P->coef, P->grau);
+
+    T0->prox = SOMA( SOMA(T1, T2), PROD(P->prox, Q->prox) );
+
+    return T0;
+
+} //Complexidade é O(N^2 + M^2) 🫩
+
 
 /*
 bool PROD(POL **P, POL **Q, POL *R){

@@ -3,10 +3,22 @@
 #include <math.h>
 #include <teste.h>
 
+typedef struct POL_ POL;
+
+struct POL_{
+
+    unsigned long long grau;
+    int coef;
+    POL *prox;
+
+}
 
 POL Pol_criar(){
 
-    POL P;
+    POL *P;
+
+    P = (POL*) malloc(sizeof(POL));
+
     P.grau = 0;
     P.coef = 0;
     P.prox = NULL;
@@ -15,7 +27,16 @@ POL Pol_criar(){
 
 } // Complexidade Const 🥴
 
-void COPIA(POL *Q, POL *P){
+void LIBERA(POL *P){
+    if(P == NULL){
+        return;
+    }
+    LIBERA(P->prox);
+    free(P);
+    return;
+}
+
+void COPIA(POL **Q, POL **P){
 
     if( Q == NULL ){
 
@@ -32,6 +53,9 @@ void COPIA(POL *Q, POL *P){
 
     }
 
+    if(Q->prox != NULL){
+        LIBERA(Q->prox);
+    }
     Q->prox = NULL;
     return;
 
@@ -39,48 +63,49 @@ void COPIA(POL *Q, POL *P){
 
 void ADD(POL *P, int c, unsigned long long g){
 
-    POL *Rem, *Pos = P;
+    POL *Pos = P;
 
-    while( (Pos != NULL) && (g > Pos->grau) ){
-
-        Rem = Pos;
+    while( ((Pos->prox) != NULL) && (g > (Pos->prox)->grau) ){
         Pos = P->prox;
-
     }
 
-    if( (Pos != NULL) && (g == Pos->grau) ){
+    if( ((Pos->prox) != NULL) && (g == (Pos->prox)->grau) ){
 
-        if(c == -(Pos->coef)){
+        if(c == -((Pos->prox)->coef)){
 
-            Rem->prox = Pos->prox;
-            //LIBERA(Pos);
+            POL *Aux = Pos->prox;
+            Pos->prox = (Pos->prox)->prox;
+            free(Aux);
             return;
 
         }
 
-        Pos->coef += c;
+        (Pos->prox)->coef += c;
         return;
 
     }
 
-    POL T = Pol_criar(); T.grau = g; T.coef = c; T.prox = Pos;
-    Rem->prox = *T;
+    POL *T; T = (POL*) malloc(sizeof(POL)); T.grau = g; T.coef = c; T.prox = Pos->prox;
+    Pos->prox = T;
 
     return;
 } // Complexidade O(N)
 
 /*
-void ADD(POL *P, int c, unsigned long long g){
+void ADD(POL **P, int c, unsigned long long g){
+    
     if(*P != NULL){
-        if( g > P->grau ){
+        if( g > (P->prox)->grau ){
             ADD(P->prox, c, g)
             return;
         }
-        if( g == P->grau ){
-            if(c == -(P->coef)){
-                //preguiça de pensar como fazer isso com recursão
+        if( g == (P->prox)->grau ){
+            if(c == -((P->prox)->coef)){
+                P->prox = (P->prox)->prox;
+                free(P->prox);
+                return;
             }
-            P->coef += c;
+            (P->prox)->coef += c;
             return;
         }
     }
@@ -103,7 +128,7 @@ POL SOMA(POL *P, POL *Q, POL *R){
 }*/
 
 // R = SOMA( &&P, &&Q);
-POL SOMA(POL **P, POL **Q){
+POL SOMA(POL *P, POL *Q){
 
     POL T = Pol_criar();
 
@@ -129,7 +154,7 @@ POL SOMA(POL **P, POL **Q){
         if((*Q)->prox == NULL){
 
             COPIA(T->prox, *P);
-            return t;
+            return T;
 
         }
 
@@ -140,6 +165,7 @@ POL SOMA(POL **P, POL **Q){
     T->coef = P->coef + Q->coef; T->grau = P->grau;
 
     if(T->coef == 0){
+        free(T);
         return SOMA(*((*P)->prox), *((*Q)->prox));
     }
 
@@ -161,19 +187,34 @@ void MonProd(*P, c, g){
 // R = PROD(&P, &Q); R = (p0 + Pp) * (q0 + Qp) = p0*q0 + q0*Pp + p0*Qp + Pp*Qp
 POL PROD(*P, *Q){
 
+    POL T0 = Pol_criar();
+
     if(P->prox == NULL){
-        //eita
+        COPIA(&T0, Q);
+        MonProd(T0, P->coef, P->grau);
+        return T0;
+    }
+    if(Q->prox == NULL){
+        COPIA(&T0, P);
+        MonProd(T0, Q->coef, Q->grau);
+        return T0;
     }
 
-    POL T0 = Pol_criar(), T1 = Pol_criar(), T2 = Pol_criar();
+    POL T1 = Pol_criar(), T2 = Pol_criar();
 
     T0->coef = P->coef * Q->coef; T0->grau = P->grau + Q->grau;
 
-    T1 = COPIA(&T1, P->prox); T2 = COPIA(&T2, Q->prox); //lixo
+    COPIA(&T1, P->prox); COPIA(&T2, Q->prox);
 
     MonProd(T1, Q->coef, Q->grau); MonProd(T2, P->coef, P->grau);
 
-    T0->prox = SOMA( SOMA(T1, T2), PROD(P->prox, Q->prox) );
+    POL T01 = SOMA( &(&T1), &(&T2) ); T02 = PROD(P->prox, Q->prox);
+
+    LIBERA(&T1); LIBERA(&T2);
+
+    T0.prox = SOMA( &(&T01), &(&T02) );
+
+    LIBERA(&T01); LIBERA(&T02);
 
     return T0;
 

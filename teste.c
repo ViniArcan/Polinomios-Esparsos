@@ -27,7 +27,7 @@ POL Pol_criar(){
 
 } // Complexidade Const 🥴
 
-void LIBERA(POL *P){
+void LIBERA(POL *P){ //Eu acho que isso aqui precisa de ponteiro duplo...
     if(P == NULL){
         return;
     }
@@ -36,11 +36,11 @@ void LIBERA(POL *P){
     return;
 }
 
-void COPIA(POL **Q, POL **P){
+void COPIA(POL *Q, POL *P){
 
     if( Q == NULL ){
 
-        Q = Pol_criar();
+        *Q = Pol_criar();
 
     }
 
@@ -91,44 +91,46 @@ void ADD(POL *P, int c, unsigned long long g){
     return;
 } // Complexidade O(N)
 
-/*
-void ADD(POL **P, int c, unsigned long long g){
-    
-    if(*P != NULL){
-        if( g > (P->prox)->grau ){
-            ADD(P->prox, c, g)
-            return;
-        }
-        if( g == (P->prox)->grau ){
-            if(c == -((P->prox)->coef)){
-                P->prox = (P->prox)->prox;
-                free(P->prox);
-                return;
-            }
-            (P->prox)->coef += c;
-            return;
-        }
+long long int COEF(POL *P, long long int g){
+
+    if(P == NULL){
+        return 0;
     }
-    else{
-        *P = Pol_criar(); P->coef = c; P->grau = g;
-        return;
+    if(g == P->grau){
+        return P->coef;
     }
-    POL T = Pol_criar(); T.grau = P->grau; T.coef = P->coef; T.prox = P->prox;
-    P->coef = c; P->grau = g; P->prox = &T;
+    return COEF(P->prox; g);
+
+}
+
+POL *REMOVE(POL *P, long long int g){
+    if(g == P->grau){
+        POL Aux = *P;
+        free(P);
+        return Aux.prox;
+    }
+    P->prox = REMOVE(P, g);
+    return P;
+}
+
+void REMOVEMENOR(POL *P){
+    P->coef = (P->prox)->coef; P->grau = (P->prox)->grau;
+    POL Aux = *(P->prox);
+    free(P->prox);
+    P->prox = Aux.prox;
     return;
 }
-*/
 
-/*
-POL SOMA(POL *P, POL *Q, POL *R){
-    int N = P->num + Q-> num;
-    POL R = Pol_criar(N);
-
-    for(int i = 0; i<N)
-}*/
+long long int MAIOR(POL *P){
+    if(P->prox == NULL){
+        return P->grau;
+    }
+    return MAIOR(P->prox);
+}
 
 // R = SOMA( &&P, &&Q);
-POL SOMA(POL *P, POL *Q){
+POL SOMA(POL **P, POL **Q){ // Eu nn acho q precisa de ponteiro duplo, to viajando aqui
+                            // Meu problema aqui é com a função COPIA que eu to usando
 
     POL T = Pol_criar();
 
@@ -191,7 +193,7 @@ POL PROD(*P, *Q){
 
     if(P->prox == NULL){
         COPIA(&T0, Q);
-        MonProd(T0, P->coef, P->grau);
+        MonProd(&T0, P->coef, P->grau);
         return T0;
     }
     if(Q->prox == NULL){
@@ -220,6 +222,87 @@ POL PROD(*P, *Q){
 
 } //Complexidade é O(N^2 + M^2) 🫩
 
+void IMPRIME_AUX(POL *P){
+
+    if(P->prox == NULL){
+
+        printf("%lld*x^%lld ", (P->coef), (P->grau));
+
+        return;
+    }
+
+    IMPRIME_AUX(P->prox);
+    printf("%lld*x^%lld ", (P->coef), (P->grau));
+
+    return;
+
+}
+
+void IMPRIME(POL *P){
+
+    if(P->prox != NULL){
+        IMPRIME_AUX(P->prox);
+    }
+    
+    printf("%lld*x^%lld\n", (P->coef), (P->grau));
+
+    return;
+
+}
+
+void IMPRIMEINV(POL *P){
+
+    if(P->prox == NULL){
+
+        printf("%lld*x^%lld\n", (P->coef), (P->grau));
+        
+        return;
+    }
+
+    printf("%lld*x^%lld ", (P->coef), (P->grau));
+    IMPRIME(P->prox);
+
+    return;
+
+}
+
+
+
+/*
+void ADD(POL **P, int c, unsigned long long g){
+    
+    if(*P != NULL){
+        if( g > (P->prox)->grau ){
+            ADD(P->prox, c, g)
+            return;
+        }
+        if( g == (P->prox)->grau ){
+            if(c == -((P->prox)->coef)){
+                P->prox = (P->prox)->prox;
+                free(P->prox);
+                return;
+            }
+            (P->prox)->coef += c;
+            return;
+        }
+    }
+    else{
+        *P = Pol_criar(); P->coef = c; P->grau = g;
+        return;
+    }
+    POL T = Pol_criar(); T.grau = P->grau; T.coef = P->coef; T.prox = P->prox;
+    P->coef = c; P->grau = g; P->prox = &T;
+    return;
+}
+*/
+
+/*
+POL SOMA(POL *P, POL *Q, POL *R){
+    int N = P->num + Q-> num;
+    POL R = Pol_criar(N);
+
+    for(int i = 0; i<N)
+}*/
 
 /*
 bool PROD(POL **P, POL **Q, POL *R){

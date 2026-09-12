@@ -13,26 +13,26 @@ struct POL_{
 
 }
 
-POL Pol_criar(){
+POL *Pol_criar(){
 
     POL *P;
 
     P = (POL*) malloc(sizeof(POL));
 
-    P.grau = 0;
-    P.coef = 0;
-    P.prox = NULL;
+    P->grau = 0;
+    P->coef = 0;
+    P->prox = NULL;
 
     return P;
 
 } // Complexidade Const 🥴
 
-void LIBERA(POL *P){ //Eu acho que isso aqui precisa de ponteiro duplo...
-    if(P == NULL){
+void LIBERA(POL **P){ //Eu acho que isso aqui precisa de ponteiro duplo...
+    if(*P == NULL){
         return;
     }
-    LIBERA(P->prox);
-    free(P);
+    LIBERA(&((*P)->prox));
+    free(*P);
     return;
 }
 
@@ -54,7 +54,7 @@ void COPIA(POL *Q, POL *P){
     }
 
     if(Q->prox != NULL){
-        LIBERA(Q->prox);
+        LIBERA(&(Q->prox));
     }
     Q->prox = NULL;
     return;
@@ -129,49 +129,70 @@ long long int MAIOR(POL *P){
 }
 
 // R = SOMA( &&P, &&Q);
-POL SOMA(POL **P, POL **Q){ // Eu nn acho q precisa de ponteiro duplo, to viajando aqui
+POL SOMA(POL *P, POL *Q){ // Eu nn acho q precisa de ponteiro duplo, to viajando aqui
                             // Meu problema aqui é com a função COPIA que eu to usando
 
-    POL T = Pol_criar();
+    POL *T; T = Pol_criar();
 
-    if ((*Q)->grau > (*P)->grau){
+    if (Q->grau > P->grau){
 
-        T->grau = (*P)->grau; T->coef = (*P)->coef;
+        T->grau = P->grau; T->coef = P->coef;
 
-        if((*P)->prox == NULL){
+        if(P->prox == NULL){
 
-            COPIA(T->prox, *Q);
+            COPIA(T->prox, Q);
             return T;
 
         }
 
-        T->prox = SOMA(*((*P)->prox), Q);
+        T->prox = SOMA(P->prox, Q);
         return T;
     }
 
-    if ((*P)->grau > (*Q)->grau){
+    if (P->grau > Q->grau){
 
-        T->grau = (*Q)->grau; T->coef = (*Q)->coef;
+        T->grau = Q->grau; T->coef = Q->coef;
 
-        if((*Q)->prox == NULL){
+        if(Q->prox == NULL){
 
-            COPIA(T->prox, *P);
+            COPIA(T->prox, P);
             return T;
 
         }
 
-        T->prox = SOMA(*((*Q)->prox), P);
+        T->prox = SOMA(P, Q->prox);
         return T;
     }
 
     T->coef = P->coef + Q->coef; T->grau = P->grau;
 
-    if(T->coef == 0){
-        free(T);
-        return SOMA(*((*P)->prox), *((*Q)->prox));
+    if(P->prox == NULL){
+        if(Q->prox == NULL){
+            if(T->coef == 0){ return NULL; }
+            return T;
+        }
+
+        if(T->coef == 0){
+            COPIA(T, Q->prox);
+        }else{ COPIA(T->prox, Q->prox); }
+
+        return T;
+    }
+    if(Q->prox == NULL){
+
+        if(T->coef == 0){
+            COPIA(T, P->prox);
+        }else{ COPIA(T->prox, P->prox); }
+
+        return T;
     }
 
-    T->prox = SOMA(*((*P)->prox), *((*Q)->prox));
+    if(T->coef == 0){
+        free(T);
+        return SOMA(P->prox, Q->prox);
+    }
+
+    T->prox = SOMA(P->prox, Q->prox);
     return T;
 } // Complexidade O(N + M) 😐
 
@@ -212,11 +233,11 @@ POL PROD(*P, *Q){
 
     POL T01 = SOMA( &(&T1), &(&T2) ); T02 = PROD(P->prox, Q->prox);
 
-    LIBERA(&T1); LIBERA(&T2);
+    LIBERA(&&T1); LIBERA(&&T2);
 
     T0.prox = SOMA( &(&T01), &(&T02) );
 
-    LIBERA(&T01); LIBERA(&T02);
+    LIBERA(&&T01); LIBERA(&&T02);
 
     return T0;
 
@@ -224,12 +245,7 @@ POL PROD(*P, *Q){
 
 void IMPRIME_AUX(POL *P){
 
-    if(P->prox == NULL){
-
-        printf("%lld*x^%lld ", (P->coef), (P->grau));
-
-        return;
-    }
+    if(P == NULL){ return; }
 
     IMPRIME_AUX(P->prox);
     printf("%lld*x^%lld ", (P->coef), (P->grau));
@@ -240,10 +256,8 @@ void IMPRIME_AUX(POL *P){
 
 void IMPRIME(POL *P){
 
-    if(P->prox != NULL){
-        IMPRIME_AUX(P->prox);
-    }
-    
+    IMPRIME_AUX(P->prox);
+
     printf("%lld*x^%lld\n", (P->coef), (P->grau));
 
     return;

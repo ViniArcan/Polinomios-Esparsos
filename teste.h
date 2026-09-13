@@ -25,6 +25,7 @@ bool ADD(POL *P, long long int c, long long int g);
 POL* SOMA(POL *P, POL *Q);
 POL* PROD(POL *P, POL *Q);
 
+void IMPRIME_AUX(MON *M)
 bool IMPRIME(POL *P);
 bool IMPRIMEINV(POL *P);
 

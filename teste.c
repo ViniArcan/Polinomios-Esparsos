@@ -144,6 +144,18 @@ bool REMOVEMENOR(POL *P){
     return TRUE;
 }
 
+bool ESCALA(POL *P, long long int c){
+    if(P == NULL){ return FALSE; }
+
+    MON *Pos = P->inicio; if(Pos == NULL){ return TRUE; }
+
+    while(Pos != NULL){
+        Pos->coef *= c;
+        Pos = Pos->prox;
+    }
+    return TRUE;
+}
+
 bool ADD(POL *P, long long int c, long long int g){
     
     if( P == NULL ){ return FALSE; }

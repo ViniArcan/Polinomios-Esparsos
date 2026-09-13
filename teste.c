@@ -104,16 +104,24 @@ long long int COEF(POL *P, long long int g){
 }
 
 POL *REMOVE(POL *P, long long int g){
+    if(P == NULL){
+        return NULL;
+    }
     if(g == P->grau){
         POL Aux = *P;
         free(P);
         return Aux.prox;
     }
-    P->prox = REMOVE(P, g);
+    P->prox = REMOVE(P->prox, g);
     return P;
 }
 
 void REMOVEMENOR(POL *P){
+    if(P->prox == NULL){
+        P->coef = 0; P->grau = 0;
+        return;
+    }
+
     P->coef = (P->prox)->coef; P->grau = (P->prox)->grau;
     POL Aux = *(P->prox);
     free(P->prox);

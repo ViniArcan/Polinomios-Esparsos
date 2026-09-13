@@ -6,19 +6,7 @@
 typedef long long int g;
 typedef int c;
 
-/*
-typedef struct mon {
-    unsigned long long grau;
-    int coef;
-    int prox;
-} mon;
-*/
-
-typedef struct POL {
-    unsigned long long grau;
-    int coef;
-    struct POL* prox;
-} POL;
+typedef struct POL POL;
 
 /*
 typedef struct POL {  Usando uma estrutura de arvore para nossos Polinomios,

@@ -1,23 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <teste.h>
+#include "teste.h"
 
-typedef struct POL_ POL;
+struct POL {
 
-struct POL_{
+    long long int grau;
+    long long int coef;
+    struct POL *prox;
 
-    unsigned long long grau;
-    int coef;
-    POL *prox;
+};
 
-}
+POL *Pol_criar(void){
 
-POL *Pol_criar(){
-
-    POL *P;
-
-    P = (POL*) malloc(sizeof(POL));
+    POL *P = (POL*) malloc(sizeof(POL)); if (P == NULL){ return NULL; }
 
     P->grau = 0;
     P->coef = 0;
@@ -27,46 +23,72 @@ POL *Pol_criar(){
 
 } // Complexidade Const 🥴
 
-void LIBERA(POL **P){ //Eu acho que isso aqui precisa de ponteiro duplo...
-    if(*P == NULL){
-        return;
+void LIBERA(POL **P){
+    if((*P == NULL) || (P == NULL)){ return; }
+
+    POL *Pos = P, *Aux;
+
+    while(Pos != NULL){
+        Aux = Pos->prox;
+        free(Pos);
+        Pos = Aux;
     }
-    LIBERA(&((*P)->prox));
-    free(*P);
+
+    *P = NULL;
     return;
 }
 
-void COPIA(POL *Q, POL *P){
+void COPIA(POL **Q, POL *P){
 
-    if( Q == NULL ){
+    if(Q == NULL){ return; }
 
-        *Q = Pol_criar();
+    if(P == NULL){ LIBERA(Q); return; }
 
+    LIBERA(Q); *Q = Pol_criar(); if(*Q == NULL){ return; }
+
+    POL *PosP = P, *PosQ = *Q;
+
+    while(PosP != NULL){
+        POL *Aux = Pol_criar(); if(Aux == NULL){ LIBERA(Q); return; }
+        
+        Aux->coef = PosP->coef; Aux->grau = PosP->grau;
+
+        PosQ->prox = Aux;
+        PosQ = Aux;
+
+        PosP = PosP->prox;
     }
 
-    Q->coef = P->coef; Q->grau = P->grau;
-
-    if (P->prox != NULL){
-
-        COPIA(Q->prox, P->prox);
-        return;
-
-    }
-
-    if(Q->prox != NULL){
-        LIBERA(&(Q->prox));
-    }
-    Q->prox = NULL;
+    
     return;
-
 } // Complexidade O(N)
 
-void ADD(POL *P, int c, unsigned long long g){
+void ADD(POL **P, long long int c, long long int g){
 
-    POL *Pos = P;
+    if( (c == 0) || (P == NULL)){
+        return;
+    }
+
+    POL *Pos = *P;
+
+    if(g < Pos->grau){
+        POL *T = Pol_criar(); if(T == NULL){ return; }
+        T->coef = c; g; T->prox = Pos;
+        *P = T;
+        return;
+    }
+    if(g == Pos->grau){
+        if(c == -(Pos->coef)){
+            *P = Pos->prox;
+            free(Pos);
+        }else{
+            Pos->coef += c;
+        }
+        return;
+    }
 
     while( ((Pos->prox) != NULL) && (g > (Pos->prox)->grau) ){
-        Pos = P->prox;
+        Pos = Pos->prox;
     }
 
     if( ((Pos->prox) != NULL) && (g == (Pos->prox)->grau) ){
@@ -85,7 +107,9 @@ void ADD(POL *P, int c, unsigned long long g){
 
     }
 
-    POL *T; T = (POL*) malloc(sizeof(POL)); T.grau = g; T.coef = c; T.prox = Pos->prox;
+    POL *T = Pol_criar(); if(T == NULL){ return; }
+    
+    T->grau = g; T->coef = c; T->prox = Pos->prox;
     Pos->prox = T;
 
     return;
@@ -136,9 +160,8 @@ long long int MAIOR(POL *P){
     return MAIOR(P->prox);
 }
 
-// R = SOMA( &&P, &&Q);
-POL SOMA(POL *P, POL *Q){ // Eu nn acho q precisa de ponteiro duplo, to viajando aqui
-                            // Meu problema aqui é com a função COPIA que eu to usando
+// *R = SOMA( &&P, &&Q);
+POL *SOMA(POL *P, POL *Q){ 
 
     POL *T; T = Pol_criar();
 
@@ -239,11 +262,11 @@ POL PROD(*P, *Q){
 
     MonProd(T1, Q->coef, Q->grau); MonProd(T2, P->coef, P->grau);
 
-    POL T01 = SOMA( &(&T1), &(&T2) ); T02 = PROD(P->prox, Q->prox);
+    POL T01 = SOMA( &T1, &T2 ); T02 = PROD(P->prox, Q->prox);
 
     LIBERA(&&T1); LIBERA(&&T2);
 
-    T0.prox = SOMA( &(&T01), &(&T02) );
+    T0.prox = SOMA( &T01, &T02 );
 
     LIBERA(&&T01); LIBERA(&&T02);
 

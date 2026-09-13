@@ -147,6 +147,8 @@ bool REMOVEMENOR(POL *P){
 bool ESCALA(POL *P, long long int c){
     if(P == NULL){ return FALSE; }
 
+    if(c == 0){ LIMPA(P); return TRUE; }
+
     MON *Pos = P->inicio; if(Pos == NULL){ return TRUE; }
 
     while(Pos != NULL){

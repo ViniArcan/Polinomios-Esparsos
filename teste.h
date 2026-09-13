@@ -1,43 +1,31 @@
 #ifndef POL_H
 #define POL_H
 
-#define TAM_MAX 10000000000 /* eu acho que isso ta bom */
-
 typedef long long int g;
-typedef int c;
+typedef long long int c;
 
 typedef struct POL POL;
 
-/*
-typedef struct POL {  Usando uma estrutura de arvore para nossos Polinomios,
-                        assim podemos conseguir complexidade linear (na vdd é até um pouco melhor) e quadratica para o produto 
-    bool monomio;
+POL* criar_pol(void);
+MON* criar_mon(long long int c, long long int g);
 
-    long long int grau;  Se colocarmos os graus em ordem crescente, então podemos apenas colocar a diferença do anterior pro proximo.
-                            Dessa forma podemos poupar algumas computações na multiplicação
-    int coef;
+void LIBERA(POL **P);
+bool LIMPA(POL *P);
+bool COPIA(POL *Q, POL *P);
 
-    struct POL* Seq;
-
-} */
-
-POL *Pol_criar(void);
-
-POL *SOMA(POL *P, POL *Q);
-POL *PROD(POL *P, POL *Q);
-
-POL *ADD(POL *P, int c, int g);
-
-void ESCALA(POL *P, int c);
-
-void REMOVE(POL *P, int g);
-void REMOVEMENOR(POL *P);
-
-int COEF(POL *P, int g);
+long long int COEF(POL *P, long long int g);
 long long int GRAU(POL *P);
 
-void IMPRIME(POL *P);
-void IMPRIMEINV(POL *P);
-void LIBERA(POL *P);
+bool REMOVE(POL *P, long long int g);
+bool REMOVEMENOR(POL *P);
+
+bool ESCALA(POL *P, long long int c);
+
+bool ADD(POL *P, long long int c, long long int g);
+POL* SOMA(POL *P, POL *Q);
+POL* PROD(POL *P, POL *Q);
+
+bool IMPRIME(POL *P);
+bool IMPRIMEINV(POL *P);
 
 #endif

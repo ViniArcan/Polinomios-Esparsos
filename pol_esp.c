@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
-#include "teste.h"
+#include "pol_esp.h"
 
 typedef struct mon {
     long long int grau;

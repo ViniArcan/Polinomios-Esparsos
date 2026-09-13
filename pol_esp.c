@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 #include "teste.h"
 
 typedef struct mon {
@@ -46,7 +47,7 @@ void LIBERA(POL *P){
 }
 
 bool LIMPA(POL *P){
-    if(P == NULL){ return FALSE; }
+    if(P == NULL){ return false; }
 
     MON *Pos = P->inicio, *Aux;
 
@@ -57,31 +58,8 @@ bool LIMPA(POL *P){
     }
 
     P->inicio = NULL;
-    return TRUE;
+    return true;
 }
-
-bool COPIA(POL *Q, POL *P){
-
-    if( (Q == NULL) || (P == NULL) ){ LIMPA(Q); return FALSE; }
-
-    LIMPA(Q);
-
-    MON *PosP = P->inicio; if(PosP == NULL){ return TRUE; }
-    Q->inicio = criar_mon(PosP->coef, PosP->grau); if(Q->inicio == NULL){ return FALSE; }
-    PosP = PosP->prox;
-    MON *PosQ = Q->inicio;
-
-    while(PosP != NULL){
-        MON *Aux = criar_mon(PosP->coef, PosP->grau); if(Aux == NULL){ LIMPA(Q); return FALSE; }
-
-        PosQ->prox = Aux;
-        PosQ = Aux;
-
-        PosP = PosP->prox;
-    }
-
-    return TRUE;
-} // Complexidade O(N)
 
 long long int COEF(POL *P, long long int g){
 
@@ -111,15 +89,38 @@ long long int GRAU(POL *P){
     return Pos->grau;
 }
 
+bool COPIA(POL *Q, POL *P){
+
+    if( (Q == NULL) || (P == NULL) ){ LIMPA(Q); return false; }
+
+    LIMPA(Q);
+
+    MON *PosP = P->inicio; if(PosP == NULL){ return true; }
+    Q->inicio = criar_mon(PosP->coef, PosP->grau); if(Q->inicio == NULL){ return false; }
+    PosP = PosP->prox;
+    MON *PosQ = Q->inicio;
+
+    while(PosP != NULL){
+        MON *Aux = criar_mon(PosP->coef, PosP->grau); if(Aux == NULL){ LIMPA(Q); return false; }
+
+        PosQ->prox = Aux;
+        PosQ = Aux;
+
+        PosP = PosP->prox;
+    }
+
+    return true;
+} // Complexidade O(N)
+
 bool REMOVE(POL *P, long long int g){
-    if(P == NULL){ return FALSE; }
+    if(P == NULL){ return false; }
     
-    MON *Pos = P->inicio; if(Pos == NULL){ return FALSE; }
+    MON *Pos = P->inicio; if(Pos == NULL){ return false; }
 
     if(g == Pos->grau){
         P->inicio = Pos->prox;
         free(Pos);
-        return TRUE;
+        return true;
     }
     while( (Pos->prox != NULL) && (g > (Pos->prox)->grau) ){
         Pos = Pos->prox;
@@ -128,52 +129,38 @@ bool REMOVE(POL *P, long long int g){
         MON *Aux = (Pos->prox)->prox;
         free(Pos->prox);
         Pos->prox = Aux;
-        return TRUE;
+        return true;
     }
 
-    return FALSE;
+    return false;
 }
 
 bool REMOVEMENOR(POL *P){
-    if(P == NULL){ return FALSE; }
-    if(P->inicio == NULL){ return FALSE; }
+    if(P == NULL){ return false; }
+    if(P->inicio == NULL){ return false; }
     
     MON *Aux = (P->inicio)->prox;
     free(P->inicio);
     P->inicio = Aux;
-    return TRUE;
-}
-
-bool ESCALA(POL *P, long long int c){
-    if(P == NULL){ return FALSE; }
-
-    if(c == 0){ LIMPA(P); return TRUE; }
-
-    MON *Pos = P->inicio; if(Pos == NULL){ return TRUE; }
-
-    while(Pos != NULL){
-        Pos->coef *= c;
-        Pos = Pos->prox;
-    }
-    return TRUE;
+    return true;
 }
 
 bool ADD(POL *P, long long int c, long long int g){
     
-    if( P == NULL ){ return FALSE; }
-    if( c == 0 ){ return TRUE; }
+    if( P == NULL ){ return false; }
+    if( c == 0 ){ return true; }
 
     if(P->inicio == NULL){
         P->inicio = criar_mon(c, g);
-        return TRUE;
+        return true;
     }
 
     MON *Pos = P->inicio;
 
     if(g < Pos->grau){
-        MON *M = criar_mon(c, g); if(M == NULL){ return FALSE; }
+        MON *M = criar_mon(c, g); if(M == NULL){ return false; }
         M->prox = Pos; P->inicio = M;
-        return TRUE;
+        return true;
     }
     if(g == Pos->grau){
         Pos->coef += c;
@@ -181,7 +168,7 @@ bool ADD(POL *P, long long int c, long long int g){
             P->inicio = Pos->prox;
             free(Pos);
         }
-        return TRUE;
+        return true;
     }
 
     while( (Pos->prox != NULL) && (g > (Pos->prox)->grau) ){
@@ -197,14 +184,28 @@ bool ADD(POL *P, long long int c, long long int g){
             Pos->prox = (Pos->prox)->prox;
             free(Aux);
         }
-        return TRUE;
+        return true;
     }
 
-    MON *M = criar_mon(c, g); if(M == NULL){ return FALSE; }
+    MON *M = criar_mon(c, g); if(M == NULL){ return false; }
     M->prox = Pos->prox;
     Pos->prox = M;
-    return TRUE;
+    return true;
 } // Complexidade O(N)
+
+bool ESCALA(POL *P, long long int c){
+    if(P == NULL){ return false; }
+
+    if(c == 0){ LIMPA(P); return true; }
+
+    MON *Pos = P->inicio; if(Pos == NULL){ return true; }
+
+    while(Pos != NULL){
+        Pos->coef *= c;
+        Pos = Pos->prox;
+    }
+    return true;
+}
 
 POL* SOMA(POL*P, POL *Q){
     if( (P == NULL) || (Q == NULL) ){ return NULL; }
@@ -330,22 +331,22 @@ void IMPRIME_AUX(MON *M){
 
 bool IMPRIME(POL *P){
 
-    if(P == NULL){ printf("-1\n"); return FALSE; }
+    if(P == NULL){ printf("-1\n"); return false; }
 
-    MON *M = P->inicio; if(M == NULL){ printf("-1\n"); return TRUE; }
+    MON *M = P->inicio; if(M == NULL){ printf("-1\n"); return true; }
 
     IMPRIME_AUX(M->prox);
 
     printf("%lld*x^%lld\n", (M->coef), (M->grau));
 
-    return TRUE;
+    return true;
 }
 
 bool IMPRIMEINV(POL *P){
 
-    if(P == NULL){ printf("-1\n"); return FALSE; }
+    if(P == NULL){ printf("-1\n"); return false; }
 
-    MON *Pos = P->inicio; if(Pos == NULL){ printf("-1\n"); return TRUE; }
+    MON *Pos = P->inicio; if(Pos == NULL){ printf("-1\n"); return true; }
 
     while(Pos->prox != NULL){
         printf("%lld*x^%lld ", (Pos->coef), (Pos->grau));
@@ -354,5 +355,5 @@ bool IMPRIMEINV(POL *P){
 
     printf("%lld*x^%lld\n", (Pos->coef), (Pos->grau));
 
-    return TRUE;
+    return true;
 }

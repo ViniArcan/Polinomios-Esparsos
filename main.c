@@ -27,9 +27,9 @@ void DEF(char nome[], int k, int Tam, PolNome *Polinomios){
 
 
 
-bool main(){
+int main(){
 
-    PolNome *Polinomios[512] = (PolNome*) malloc(MAX_POLS * sizeof(PolNome));
+    PolNome *Polinomios = (PolNome*) malloc(MAX_POLS * sizeof(PolNome));
     if (Polinomios == NULL){ printf("Falha na alocacao de memoria :(\n"); return 1; }
 
     int Tam = 0;
@@ -39,13 +39,12 @@ bool main(){
 
 
 
-        if(scanf("%12s", comando) != 1){
+        if(scanf("%12s", operacao) != 1){
             break; 
         }
 
-        if(strcmp(comando, "DEF") == 0){
-            char nome[32];
-            int k;
+        if(strcmp(operacao, "DEF") == 0){
+            char nome[11]; int k;
             
             scanf("%10s %d", nome, &k);
             
@@ -55,8 +54,77 @@ bool main(){
             } else {
                 printf("Tem muito Polinimio po...\n");
             }
+        }else if(strcmp(operacao, "IMPRIME") == 0){
+            char nome[11]; int flag = 1;
+
+            scanf("%10s", nome);
+
+            for(int i=0; i<Tam; i++){
+                if(strcmp(Polinomios[i].Nome, nome) == 0){
+                    IMPRIME(Polinomios[i].Pol);
+                    flag = 0;
+                    break;
+                }
+            }
+            if(flag){ printf("-1\n"); }
+        }else if(strcmp(operacao, "IMPRIMEINV") == 0){
+            char nome[11]; int flag = 1;
+
+            scanf("%10s", nome);
+
+            for(int i=0; i<Tam; i++){
+                if(strcmp(Polinomios[i].Nome, nome) == 0){
+                    IMPRIMEINV(Polinomios[i].Pol);
+                    flag = 0;
+                    break;
+                }
+            }
+            if(flag){ printf("-1\n"); }
+
+        }else if(strcmp(operacao, "REMOVEMENOR") == 0){
+            char nome[11]; int flag = 1;
+
+            scanf("%10s", nome);
+
+            for(int i=0; i<Tam; i++){
+                if(strcmp(Polinomios[i].Nome, nome) == 0){
+                    REMOVEMENOR(Polinomios[i].Pol);
+                    flag = 0;
+                    break;
+                }
+            }
+            if(flag){ printf("-1\n"); }
+
+        }else if(strcmp(operacao, "GRAU") == 0){ //TEM CONDIÇÃO PARA CONSIDERAR AQUI!!!!! SE O POL FOR NULO...
+            char nome[11]; int flag = 1;
+
+            scanf("%10s", nome);
+
+            for(int i=0; i<Tam; i++){
+                if(strcmp(Polinomios[i].Nome, nome) == 0){
+                    printf("%lld\n", GRAU(Polinomios[i].Pol));
+                    flag = 0;
+                    break;
+                }
+            }
+            if(flag){ printf("-1\n"); }
+
+        }else if(strcmp(operacao, "COEF") == 0){
+            char nome[11]; long long int g; int flag = 1;
+
+            scanf("%10s %lld", nome, g);
+
+            for(int i=0; i<Tam; i++){
+                if(strcmp(Polinomios[i].Nome, nome) == 0){
+                    printf("%lld\n", COEF(Polinomios[i].Pol, g));
+                    flag = 0;
+                    break;
+                }
+            }
+            if(flag){ printf("-1\n"); }
+
         }
-        else if(strcmp(comando, "FIM") == 0){
+        else if(strcmp(operacao, "FIM") == 0){
             break;
         }
 
@@ -69,5 +137,5 @@ bool main(){
 
     free(Polinomios);
     Polinomios = NULL;
-    return true;
+    return 0;
 }

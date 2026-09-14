@@ -62,7 +62,7 @@ bool LIMPA(POL *P){
 
 long long int COEF(POL *P, long long int g){
 
-    if(P == NULL){ return 0; }
+    if(P == NULL){ return -1; }
 
     MON *Pos = P->inicio; if(Pos == NULL){ return 0; }
 

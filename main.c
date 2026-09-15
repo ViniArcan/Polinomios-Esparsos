@@ -4,7 +4,7 @@
 #include <string.h>
 #include "pol_esp.h"
 
-#define MAX_POLS 512
+#define MAX_POLS 513
 
 typedef struct {
     POL *Pol;
@@ -26,9 +26,7 @@ void DEF(char nome[], int k, int Pos, PolNome *Polinomios){
 
 int BUSCA_NOME(PolNome *Polinomios, int Tam, char *nome) {
     for (int i = 0; i < Tam; i++) {
-        if (strcmp(Polinomios[i].Nome, nome) == 0) {
-            return i;
-        }
+        if (strcmp(Polinomios[i].Nome, nome) == 0) { return i; }
     }
     return -1;
 }
@@ -36,21 +34,16 @@ int BUSCA_NOME(PolNome *Polinomios, int Tam, char *nome) {
 int main(void){
 
     PolNome *Polinomios = (PolNome*) malloc(MAX_POLS * sizeof(PolNome));
-    if (Polinomios == NULL){ 
-        printf("Falha na alocacao de memoria\n"); 
-        return 1; 
-    }
+    if (Polinomios == NULL){ printf("Falha na alocacao de memoria\n"); return 1; }
 
-    int Tam = 0;
-    char operacao[13];
+    int Tam = 0; char operacao[13];
 
     while(true){
         if(scanf("%12s", operacao) != 1){
             break; 
         }
         if(strcmp(operacao, "DEF") == 0){
-            char nome[11];
-            int k;
+            char nome[11]; int k;
             
             scanf("%10s %d", nome, &k);
 
@@ -116,8 +109,7 @@ int main(void){
             }
 
         }else if(strcmp(operacao, "REMOVE") == 0){
-            char nome[11]; 
-            long long int g;
+            char nome[11]; long long int g;
 
             scanf("%10s %lld", nome, &g);
 
@@ -148,8 +140,7 @@ int main(void){
             }
 
         }else if(strcmp(operacao, "COEF") == 0){
-            char nome[11]; 
-            long long int g;
+            char nome[11]; long long int g;
             
             scanf("%10s %lld", nome, &g); 
 
@@ -161,8 +152,7 @@ int main(void){
             }
 
         }else if(strcmp(operacao, "ESCALA") == 0){
-            char nome[11]; 
-            long long int c;
+            char nome[11]; long long int c;
             
             scanf("%10s %lld", nome, &c);
 
@@ -172,8 +162,7 @@ int main(void){
             }
 
         }else if(strcmp(operacao, "ADD") == 0){
-            char nome[11]; 
-            long long int c, g;
+            char nome[11]; long long int c, g;
 
             scanf("%10s %lld %lld", nome, &c, &g);
 
@@ -189,15 +178,14 @@ int main(void){
             int pos1 = BUSCA_NOME(Polinomios, Tam, nome1);
             int pos2 = BUSCA_NOME(Polinomios, Tam, nome2);
 
-            if(pos1 == -1 || pos2 == -1){
-                continue; 
-            }
+            if(pos1 == -1 || pos2 == -1){ continue; }
 
             int pos3 = BUSCA_NOME(Polinomios, Tam, nome3);
             
             if(pos3 != -1){
-                LIBERA(Polinomios[pos3].Pol); 
+                POL *Aux = Polinomios[pos3].Pol;
                 Polinomios[pos3].Pol = SOMA(Polinomios[pos1].Pol, Polinomios[pos2].Pol);
+                LIBERA(Aux); 
             } else {
                 if(Tam < MAX_POLS){
                     Polinomios[Tam].Pol = SOMA(Polinomios[pos1].Pol, Polinomios[pos2].Pol); strcpy(Polinomios[Tam].Nome, nome3);
@@ -214,15 +202,14 @@ int main(void){
             int pos1 = BUSCA_NOME(Polinomios, Tam, nome1);
             int pos2 = BUSCA_NOME(Polinomios, Tam, nome2);
 
-            if(pos1 == -1 || pos2 == -1){
-                continue; 
-            }
+            if(pos1 == -1 || pos2 == -1){ continue; }
 
             int pos3 = BUSCA_NOME(Polinomios, Tam, nome3);
             
             if(pos3 != -1){
-                LIBERA(Polinomios[pos3].Pol);
+                POL *Aux = Polinomios[pos3].Pol;
                 Polinomios[pos3].Pol = PROD(Polinomios[pos1].Pol, Polinomios[pos2].Pol);
+                LIBERA(Aux);
             }else{
                 if(Tam < MAX_POLS){
                     Polinomios[Tam].Pol = PROD(Polinomios[pos1].Pol, Polinomios[pos2].Pol);

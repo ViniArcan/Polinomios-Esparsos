@@ -332,7 +332,7 @@ bool IMPRIME(POL *P){
 
     if(P == NULL){ printf("-1\n"); return false; }
 
-    MON *M = P->inicio; if(M == NULL){ printf("-1\n"); return true; }
+    MON *M = P->inicio; if(M == NULL){ printf("0\n"); return true; }
 
     IMPRIME_AUX(M->prox);
 

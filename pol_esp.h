@@ -8,7 +8,7 @@ POL* criar_pol(void);
 void LIBERA(POL *P);
 bool LIMPA(POL *P);
 
-bool COEF(POL *P, long long int g);
+long long int COEF(POL *P, long long int g);
 long long int GRAU(POL *P);
 
 bool COPIA(POL *Q, POL *P);

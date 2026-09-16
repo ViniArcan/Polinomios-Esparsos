@@ -1,11 +1,11 @@
 CC = gcc
 FLGS = -std=c11 -Wall -Wextra
-all: sistema gerador
+all: programa gerador
 PROG = programa
 OBJS = main.o pol_esp.o
 
-sistema: main.o pol_esp.o
-	$(CC) $(FLGS) -o sistema main.o pol_esp.o
+programa: main.o pol_esp.o
+	$(CC) $(FLGS) -o programa main.o pol_esp.o
 
 gerador: gerador.c
 	$(CC) $(FLGS) -o gerador gerador.c

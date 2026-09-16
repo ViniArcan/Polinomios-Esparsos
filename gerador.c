@@ -3,7 +3,7 @@
 #include <time.h>
 
 #define MAX_GRAU 500000
-#define MAX_TERMOS 50000
+#define MAX_TERMOS 30000
 #define MAX_ESCALA 20000
 
 void gerar_polinomio(const char *nome) {
